@@ -1,5 +1,5 @@
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import AceEditor from 'react-ace'
 import { CheckIcon, ChevronUpDownIcon, ArrowPathIcon } from '@heroicons/react/20/solid'
@@ -7,30 +7,34 @@ import { CheckIcon, ChevronUpDownIcon, ArrowPathIcon } from '@heroicons/react/20
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-python";
+import "ace-builds/src-noconflict/mode-typescript";
+import "ace-builds/src-noconflict/mode-css";
+import "ace-builds/src-noconflict/mode-html";
+import "ace-builds/src-noconflict/mode-kotlin";
+import "ace-builds/src-noconflict/mode-swift";
+import "ace-builds/src-noconflict/mode-mysql";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-const langs = [
-  { name: 'Javascript', code: 'javascript' },
-  { name: 'Java', code: 'java' },
-  { name: 'Python', code: 'python' }
-]
+import audio from '../assets/output.mp3';
 
 export default function CodeEditor(props: {
   code: string,
+  langs: any[],
   isReviewing: boolean,
+  selected: any,
+  setSelected: (selected: any) => void,
   setCode: (code: string) => void,
   handleValidateCode: () => void
 }) {
-  const { code, setCode, handleValidateCode, isReviewing } = props
-  const [selected, setSelected] = useState(langs[0])
+  const { code, langs, setCode, handleValidateCode, isReviewing, selected, setSelected } = props
 
   return <div className="flex flex-col items-center my-5 ml-5 border border-gray-200 rounded-xl shadow-md">
-    <h3 className="text-2xl text-gray-400 py-5">Código a validar 👌</h3>
-    <div className="flex justify-center items-center px-5 mb-5 z-10 w-full">
+    <h3 className="text-2xl text-gray-400 py-5">Código a validar 🔎</h3>
       <p className="text-md mr-5">Lenguaje</p>
+    <div className="flex justify-center items-center px-5 mb-5 z-10 w-full">
       <Listbox value={selected} onChange={setSelected}>
-        <div className="relative mt-1 w-[200px]">
+        <div className="relative mt-1 w-[300px]">
           <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md border focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
             <span className="block truncate">{selected.name}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -46,7 +50,7 @@ export default function CodeEditor(props: {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            <Listbox.Options className="absolute mt-1 max-h-screen w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {langs.map((lang, idx) => (
                 <Listbox.Option
                   key={idx}
@@ -78,11 +82,10 @@ export default function CodeEditor(props: {
         </div>
       </Listbox>
     </div>
-    <div className="pb-5">
+    <div className="w-full pb-5 px-5">
       <AceEditor
-        className="rounded-xl"
-        width="625px"
-        height="600px"
+        className="flex rounded-xl"
+        width="100%"
         placeholder="Placeholder Text"
         mode={selected.code}
         theme="monokai"
